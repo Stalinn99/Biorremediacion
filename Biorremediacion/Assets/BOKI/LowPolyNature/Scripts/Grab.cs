@@ -3,40 +3,57 @@ using UnityEngine.UI;
 
 public class Grab : MonoBehaviour
 {
-    [Header("Configuración")]
+    [Header("Configuración de Agarre")]
     public GameObject HandPoint;
     public Image crosshair;
-    public float distanciaAgarre = 3f;
+    public float distanciaAgarre = 5f;
     public Camera playerCamera;
+
+    [Header("Sistema de Guantes y UI")]
+    public GameObject GuanteVisualCamera;
+    public GameObject textoIndicador;
 
     private GameObject objetoAgarrado = null;
     private GameObject objetoEnAlcance = null;
     private Vector3 escalaOriginal;
+    private bool tieneGuantesPuestos = false;
+
+    void Awake()
+    {
+        if (GuanteVisualCamera != null)
+            GuanteVisualCamera.SetActive(false);
+    }
+
+    void Start()
+    {
+        if (playerCamera == null)
+            playerCamera = Camera.main;
+        if (textoIndicador != null)
+            textoIndicador.SetActive(true);
+    }
 
     void Update()
     {
         if (objetoAgarrado == null)
             DetectarObjetoConRaycast();
-
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetMouseButtonDown(0))
         {
             if (objetoAgarrado == null && objetoEnAlcance != null)
                 Agarrar();
             else if (objetoAgarrado != null)
                 Soltar();
         }
-
         if (objetoAgarrado != null)
             objetoAgarrado.transform.localScale = escalaOriginal;
     }
 
     private void DetectarObjetoConRaycast()
     {
+        int layerMask = ~(1 << LayerMask.NameToLayer("Ignore Raycast"));
         Ray ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
-
-        if (Physics.Raycast(ray, out RaycastHit hit, distanciaAgarre))
+        if (Physics.Raycast(ray, out RaycastHit hit, distanciaAgarre, layerMask))
         {
-            if (hit.collider.CompareTag("Grabbable_Object"))
+            if (hit.collider.CompareTag("Grabbable_Object") || hit.collider.CompareTag("Guante_Item"))
             {
                 if (hit.collider.gameObject != objetoEnAlcance)
                 {
@@ -58,7 +75,6 @@ public class Grab : MonoBehaviour
             LimpiarSeleccion();
         }
     }
-
     private void LimpiarSeleccion()
     {
         if (objetoEnAlcance != null)
@@ -73,9 +89,21 @@ public class Grab : MonoBehaviour
 
     private void Agarrar()
     {
+        if (objetoEnAlcance.CompareTag("Guante_Item"))
+        {
+            GameObject guanteSuelo = objetoEnAlcance;
+            LimpiarSeleccion();
+            Destroy(guanteSuelo);
+            if (GuanteVisualCamera != null)
+                GuanteVisualCamera.SetActive(true);
+            if (textoIndicador != null)
+                textoIndicador.SetActive(false);
+            tieneGuantesPuestos = true;
+            return;
+        }
+
         objetoAgarrado = objetoEnAlcance;
         escalaOriginal = objetoAgarrado.transform.localScale;
-
         QuitarOutline(objetoAgarrado);
 
         if (crosshair != null)
@@ -114,7 +142,6 @@ public class Grab : MonoBehaviour
             rb.isKinematic = false;
             rb.useGravity = true;
         }
-
         objetoAgarrado.transform.SetParent(null);
         objetoAgarrado.transform.localScale = escalaOriginal;
         objetoAgarrado = null;
