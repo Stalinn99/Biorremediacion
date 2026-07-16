@@ -4,7 +4,8 @@ using UnityEngine.UI;
 public class Grab : MonoBehaviour
 {
     [Header("Configuración de Agarre")]
-    public GameObject HandPoint;
+    public GameObject HandPointIzquierdo; // AÑADIDO: Punto para el multiparámetro
+    public GameObject HandPointDerecho;   // AÑADIDO: Punto para el agarrador
     public Image crosshair;
     public float distanciaAgarre = 5f;
     public Camera playerCamera;
@@ -23,9 +24,12 @@ public class Grab : MonoBehaviour
     [Tooltip("Material que simula el guante puesto")]
     public Material materialGuante;
 
-    private GameObject objetoAgarrado = null;
+    // AÑADIDO: Se separaron las variables para cada mano
+    private GameObject objetoAgarradoIzquierdo = null;
+    private GameObject objetoAgarradoDerecho = null;
     private GameObject objetoEnAlcance = null;
-    private Vector3 escalaOriginal;
+    private Vector3 escalaOriginalIzquierda;
+    private Vector3 escalaOriginalDerecha;
 
     // Variables de control internas
     private bool manoIzquierdaEquipada = false;
@@ -56,23 +60,30 @@ public class Grab : MonoBehaviour
 
     void Update()
     {
-        if (objetoAgarrado == null)
-            DetectarObjetoConRaycast();
+        // CORRECCIÓN: Siempre lanzamos el láser para que pueda ver la sonda, 
+        // la lógica inteligente de qué resaltar va adentro.
+        DetectarObjetoConRaycast();
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (objetoAgarrado == null && objetoEnAlcance != null)
+            if (objetoEnAlcance != null && (objetoAgarradoIzquierdo == null || objetoAgarradoDerecho == null))
             {
                 Agarrar();
             }
-            else if (objetoAgarrado != null)
+            else
             {
-                Soltar();
+                if (objetoAgarradoDerecho != null)
+                    SoltarDerecha();
+                else if (objetoAgarradoIzquierdo != null)
+                    SoltarIzquierda();
             }
         }
 
-        if (objetoAgarrado != null)
-            objetoAgarrado.transform.localScale = escalaOriginal;
+        if (objetoAgarradoIzquierdo != null)
+            objetoAgarradoIzquierdo.transform.localScale = escalaOriginalIzquierda;
+        
+        if (objetoAgarradoDerecho != null)
+            objetoAgarradoDerecho.transform.localScale = escalaOriginalDerecha;
     }
 
     private void DetectarObjetoConRaycast()
@@ -81,7 +92,29 @@ public class Grab : MonoBehaviour
         Ray ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
         if (Physics.Raycast(ray, out RaycastHit hit, distanciaAgarre, layerMask))
         {
-            if (hit.collider.CompareTag("Guante_Item") || (hit.collider.CompareTag("Grabbable_Object") && manoIzquierdaEquipada && manoDerechaEquipada))
+            bool esGuante = hit.collider.CompareTag("Guante_Item");
+            bool esMulti = hit.collider.CompareTag("Grabbable_Object");
+            bool esAgarrador = hit.collider.CompareTag("Agarrador");
+            bool esSonda = hit.collider.CompareTag("Sonda");
+
+            // Lógica inteligente: Solo se puede resaltar si es válido interactuar con ello AHORA
+            bool sePuedeResaltar = false;
+
+            if (esGuante) 
+            {
+                sePuedeResaltar = true;
+            }
+            else if (manoIzquierdaEquipada && manoDerechaEquipada)
+            {
+                // Si la mano izquierda está libre, resalta el multi
+                if (esMulti && objetoAgarradoIzquierdo == null) sePuedeResaltar = true; 
+                // Si la mano derecha está libre, resalta el palo
+                else if (esAgarrador && objetoAgarradoDerecho == null) sePuedeResaltar = true; 
+                // Si TIENES el palo en la mano, resalta la sonda
+                else if (esSonda && objetoAgarradoDerecho != null) sePuedeResaltar = true; 
+            }
+
+            if (sePuedeResaltar)
             {
                 if (hit.collider.gameObject != objetoEnAlcance)
                 {
@@ -167,62 +200,129 @@ public class Grab : MonoBehaviour
         // =====================================================================
         // Agarre normal de objetos comunes (Solo se alcanzará si pasó el filtro)
         // =====================================================================
-        objetoAgarrado = objetoEnAlcance;
-        escalaOriginal = objetoAgarrado.transform.localScale;
-        QuitarOutline(objetoAgarrado);
+        GameObject objetoAProcesar = objetoEnAlcance;
+        GameObject puntoManoDestino = null;
+
+        // AÑADIDO: Decide a qué mano va dependiendo del Tag
+        if (objetoAProcesar.CompareTag("Grabbable_Object"))
+        {
+            if (objetoAgarradoIzquierdo != null) return;
+            objetoAgarradoIzquierdo = objetoAProcesar;
+            escalaOriginalIzquierda = objetoAProcesar.transform.localScale;
+            puntoManoDestino = HandPointIzquierdo;
+        }
+        else if (objetoAProcesar.CompareTag("Agarrador"))
+        {
+            if (objetoAgarradoDerecho != null) return;
+            objetoAgarradoDerecho = objetoAProcesar;
+            escalaOriginalDerecha = objetoAProcesar.transform.localScale;
+            puntoManoDestino = HandPointDerecho;
+
+            // CONEXIÓN NUEVA: Le avisamos al script propio del aparato que lo acabamos de equipar
+            AgarradorTelescopico scriptAparato = objetoAProcesar.GetComponent<AgarradorTelescopico>();
+            if (scriptAparato != null)
+            {
+                scriptAparato.SetEquipado(true, playerCamera);
+            }
+        }
+        else if (objetoAProcesar.CompareTag("Sonda"))
+        {
+            // MODIFICADO: Si es una sonda, evitamos que se intente procesar con clic izquierdo,
+            // ya que la recolección la maneja el script del brazo telescópico mediante el clic derecho.
+            return;
+        }
+
+        if (puntoManoDestino == null) return;
+
+        QuitarOutline(objetoAProcesar);
 
         if (crosshair != null)
             crosshair.color = Color.white;
 
-        Rigidbody rb = objetoAgarrado.GetComponent<Rigidbody>();
+        // TU LÓGICA DE FÍSICAS ORIGINAL INTACTA
+        Rigidbody rb = objetoAProcesar.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.isKinematic = true;
-            rb.useGravity = false;
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+            rb.useGravity = false;
         }
 
-        if (objetoAgarrado.TryGetComponent<Collider>(out Collider col))
+        // CORRECCIÓN MÍNIMA: Apagar todos los colliders hijos (evita caer del mapa)
+        Collider[] todosLosColisionadores = objetoAProcesar.GetComponentsInChildren<Collider>();
+        foreach (Collider col in todosLosColisionadores)
+        {
             col.enabled = false;
+        }
 
-        objetoAgarrado.transform.SetParent(HandPoint.transform, true);
+        objetoAProcesar.transform.SetParent(puntoManoDestino.transform, true);
 
-        Transform snapPoint = objetoAgarrado.transform.Find("grip_point");
+        Transform snapPoint = objetoAProcesar.transform.Find("grip_point");
 
         if (snapPoint != null)
         {
-            objetoAgarrado.transform.localRotation = Quaternion.Inverse(snapPoint.localRotation);
-
-            objetoAgarrado.transform.localPosition = -snapPoint.localPosition;
+            objetoAProcesar.transform.localRotation = Quaternion.Inverse(snapPoint.localRotation);
+            objetoAProcesar.transform.localPosition = -snapPoint.localPosition;
         }
         else
         {
-            objetoAgarrado.transform.localPosition = Vector3.zero;
-            objetoAgarrado.transform.localRotation = Quaternion.identity;
+            objetoAProcesar.transform.localPosition = Vector3.zero;
+            objetoAProcesar.transform.localRotation = Quaternion.identity;
         }
-
-        objetoAgarrado.transform.localScale = escalaOriginal;
 
         objetoEnAlcance = null;
     }
 
-    private void Soltar()
+    // AÑADIDO: Método Soltar dividido para Izquierda basado en tu código
+    private void SoltarIzquierda()
     {
-        if (objetoAgarrado == null) return;
+        if (objetoAgarradoIzquierdo == null) return;
 
-        if (objetoAgarrado.TryGetComponent<Collider>(out Collider col))
+        Collider[] todosLosColisionadores = objetoAgarradoIzquierdo.GetComponentsInChildren<Collider>();
+        foreach (Collider col in todosLosColisionadores)
+        {
             col.enabled = true;
+        }
 
-        Rigidbody rb = objetoAgarrado.GetComponent<Rigidbody>();
+        Rigidbody rb = objetoAgarradoIzquierdo.GetComponent<Rigidbody>();
         if (rb != null)
         {
             rb.isKinematic = false;
             rb.useGravity = true;
         }
-        objetoAgarrado.transform.SetParent(null);
-        objetoAgarrado.transform.localScale = escalaOriginal;
-        objetoAgarrado = null;
+        objetoAgarradoIzquierdo.transform.SetParent(null);
+        objetoAgarradoIzquierdo.transform.localScale = escalaOriginalIzquierda;
+        objetoAgarradoIzquierdo = null;
+    }
+
+    // AÑADIDO: Método Soltar dividido para Derecha basado en tu código
+    private void SoltarDerecha()
+    {
+        if (objetoAgarradoDerecho == null) return;
+
+        // CONEXIÓN NUEVA: Le avisamos al aparato que lo soltamos para que apague sus funciones mecánicas
+        AgarradorTelescopico scriptAparato = objetoAgarradoDerecho.GetComponent<AgarradorTelescopico>();
+        if (scriptAparato != null)
+        {
+            scriptAparato.SetEquipado(false, null);
+        }
+
+        Collider[] todosLosColisionadores = objetoAgarradoDerecho.GetComponentsInChildren<Collider>();
+        foreach (Collider col in todosLosColisionadores)
+        {
+            col.enabled = true;
+        }
+
+        Rigidbody rb = objetoAgarradoDerecho.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.useGravity = true;
+        }
+        objetoAgarradoDerecho.transform.SetParent(null);
+        objetoAgarradoDerecho.transform.localScale = escalaOriginalDerecha;
+        objetoAgarradoDerecho = null;
     }
 
     public void RestablecerMaterialesManos()
