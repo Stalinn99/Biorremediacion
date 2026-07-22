@@ -1,69 +1,65 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Grab : MonoBehaviour
 {
     [Header("Configuración de Agarre")]
-    public GameObject HandPointIzquierdo; // AÑADIDO: Punto para el multiparámetro
-    public GameObject HandPointDerecho;   // AÑADIDO: Punto para el agarrador
+    public GameObject HandPointIzquierdo; // Punto para el multiparámetro
+    public GameObject HandPointDerecho;   // Punto para el agarrador
     public Image crosshair;
-    public float distanciaAgarre = 5f;
+    public float grabDistance = 5f;
     public Camera playerCamera;
 
-    [Header("Sistema de Guantes y UI")]
-    public GameObject GuanteVisualCamera;
-    public GameObject textoIndicador;
+    [Header("Glove & Tutorial UI")]
+    public GameObject gloveVisualCamera;
+    public GameObject initialPromptText;
 
-    [Header("Cambio de Materiales (Guantes)")]
-    [Tooltip("El SkinnedMeshRenderer de la Mano Izquierda")]
-    public Renderer mallaManoIzquierda;
-    [Tooltip("El SkinnedMeshRenderer de la Mano Derecha")]
-    public Renderer mallaManoDerecha;
-    [Tooltip("Material original de la piel/mano desnuda")]
-    public Material materialManoDesnuda;
-    [Tooltip("Material que simula el guante puesto")]
-    public Material materialGuante;
+    [Header("Hand Material Swapping")]
+    public Renderer leftHandRenderer;
+    public Renderer rightHandRenderer;
+    public Material defaultHandMat;
+    public Material gloveMaterial;
 
-    // AÑADIDO: Se separaron las variables para cada mano
+    // Variables para cada mano
     private GameObject objetoAgarradoIzquierdo = null;
     private GameObject objetoAgarradoDerecho = null;
     private GameObject objetoEnAlcance = null;
     private Vector3 escalaOriginalIzquierda;
     private Vector3 escalaOriginalDerecha;
 
-    // Variables de control internas
-    private bool manoIzquierdaEquipada = false;
-    private bool manoDerechaEquipada = false;
+    private GameObject hoveredObject = null;
+    private bool isLeftGloveEquipped = false;
+    private bool isRightGloveEquipped = false;
 
-    void Awake()
-    {
-
-    }
+    [Header("Input Settings")]
+    public KeyCode infoKey = KeyCode.I;
 
     void Start()
     {
-        if (playerCamera == null)
-            playerCamera = Camera.main;
+        if (playerCamera == null) playerCamera = Camera.main;
+        if (initialPromptText != null) initialPromptText.SetActive(true);
+        if (gloveVisualCamera != null) gloveVisualCamera.SetActive(true);
 
-        if (textoIndicador != null)
-            textoIndicador.SetActive(true);
-
-        // 1. Primero le aplicamos el material de la mano desnuda a ambas mallas
-        RestablecerMaterialesManos();
-
-        // 2. Ahora que ya tienen el material inicial puesto, hacemos visible el contenedor
-        if (GuanteVisualCamera != null)
-        {
-            GuanteVisualCamera.SetActive(true);
-        }
+        ResetHandMaterials();
+        LockCursor(); // Bloquea el cursor al iniciar el juego
     }
 
     void Update()
     {
-        // CORRECCIÓN: Siempre lanzamos el láser para que pueda ver la sonda, 
-        // la lógica inteligente de qué resaltar va adentro.
+        // 1. Manejar la apertura y cierre del panel de información
+        HandleObjectInfo();
+
+        // IMPORTANTE: Si el panel está abierto, bloqueamos el resto del script.
+        if (HUDController.Instance != null && HUDController.Instance.IsPanelOpen())
+        {
+            return;
+        }
+
+        // 2. Detectar objetos interactivos mediante raycast
         DetectarObjetoConRaycast();
 
+        // 3. Agarrar o soltar objetos con clic izquierdo
         if (Input.GetMouseButtonDown(0))
         {
             if (objetoEnAlcance != null && (objetoAgarradoIzquierdo == null || objetoAgarradoDerecho == null))
@@ -86,124 +82,145 @@ public class Grab : MonoBehaviour
             objetoAgarradoDerecho.transform.localScale = escalaOriginalDerecha;
     }
 
+    private void HandleObjectInfo()
+    {
+        if (HUDController.Instance == null) return;
+
+        // Si el panel ESTÁ ABIERTO
+        if (HUDController.Instance.IsPanelOpen())
+        {
+            if (Input.GetKeyDown(infoKey) || Input.GetKeyDown(KeyCode.Escape))
+            {
+                HUDController.Instance.CloseInfoPanel();
+                StartCoroutine(RelockCursorNextFrame());
+            }
+            return;
+        }
+
+        // Si el panel ESTÁ CERRADO y presionamos Info sobre un objeto válido
+        if (Input.GetKeyDown(infoKey) && hoveredObject != null)
+        {
+            InformationObject info = hoveredObject.GetComponentInParent<InformationObject>();
+            if (info != null)
+            {
+                HUDController.Instance.OpenInfoPanel(info.displayName, info.size, info.specifications);
+                UnlockCursor(); 
+            }
+        }
+    }
+
+    private void UpdateHoverHint()
+    {
+        if (hoveredObject == null)
+        {
+            if (HUDController.Instance != null) HUDController.Instance.HideHint();
+            return;
+        }
+
+        InformationObject info = hoveredObject.GetComponentInParent<InformationObject>();
+        if (info != null && HUDController.Instance != null)
+        {
+            HUDController.Instance.UpdateHint($"[{infoKey}] Info");
+        }
+    }
+
     private void DetectarObjetoConRaycast()
     {
         int layerMask = ~(1 << LayerMask.NameToLayer("Ignore Raycast"));
         Ray ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
-        if (Physics.Raycast(ray, out RaycastHit hit, distanciaAgarre, layerMask))
+        
+        if (Physics.Raycast(ray, out RaycastHit hit, grabDistance, layerMask))
         {
+            GameObject hitObject = hit.collider.gameObject;
+            hoveredObject = hitObject;
+            UpdateHoverHint();
+
             bool esGuante = hit.collider.CompareTag("Guante_Item");
             bool esMulti = hit.collider.CompareTag("Grabbable_Object");
             bool esAgarrador = hit.collider.CompareTag("Agarrador");
             bool esSonda = hit.collider.CompareTag("Sonda");
 
-            // Lógica inteligente: Solo se puede resaltar si es válido interactuar con ello AHORA
             bool sePuedeResaltar = false;
 
             if (esGuante) 
             {
                 sePuedeResaltar = true;
             }
-            else if (manoIzquierdaEquipada && manoDerechaEquipada)
+            else if (isLeftGloveEquipped && isRightGloveEquipped)
             {
-                // Si la mano izquierda está libre, resalta el multi
                 if (esMulti && objetoAgarradoIzquierdo == null) sePuedeResaltar = true; 
-                // Si la mano derecha está libre, resalta el palo
                 else if (esAgarrador && objetoAgarradoDerecho == null) sePuedeResaltar = true; 
-                // Si TIENES el palo en la mano, resalta la sonda
                 else if (esSonda && objetoAgarradoDerecho != null) sePuedeResaltar = true; 
             }
 
             if (sePuedeResaltar)
             {
-                if (hit.collider.gameObject != objetoEnAlcance)
+                if (hitObject != objetoEnAlcance)
                 {
                     QuitarOutline(objetoEnAlcance);
-                    objetoEnAlcance = hit.collider.gameObject;
+                    objetoEnAlcance = hitObject;
                     AgregarOutline(objetoEnAlcance);
-
-                    if (crosshair != null)
-                        crosshair.color = Color.green;
+                    if (crosshair != null) crosshair.color = Color.green;
                 }
             }
             else
             {
-                LimpiarSeleccion();
+                QuitarOutline(objetoEnAlcance);
+                objetoEnAlcance = null;
+                if (crosshair != null) crosshair.color = Color.white;
             }
         }
         else
         {
-            LimpiarSeleccion();
+            QuitarOutline(objetoEnAlcance);
+            objetoEnAlcance = null;
+            hoveredObject = null;
+            if (crosshair != null) crosshair.color = Color.white;
+            if (HUDController.Instance != null && !HUDController.Instance.IsPanelOpen())
+            {
+                HUDController.Instance.HideHint();
+            }
         }
     }
 
-    private void LimpiarSeleccion()
+    private void AgregarOutline(GameObject obj)
     {
-        if (objetoEnAlcance != null)
-        {
-            QuitarOutline(objetoEnAlcance);
-            objetoEnAlcance = null;
+        if (obj == null) return;
+        Outline outline = obj.GetComponent<Outline>() ?? obj.AddComponent<Outline>();
+        outline.effectColor = Color.green;
+        outline.enabled = true;
+    }
 
-            if (crosshair != null)
-                crosshair.color = Color.white;
-        }
+    private void QuitarOutline(GameObject obj)
+    {
+        if (obj != null && obj.GetComponent<Outline>()) obj.GetComponent<Outline>().enabled = false;
     }
 
     private void Agarrar()
     {
-        bool esGuante = objetoEnAlcance.CompareTag("Guante_Item");
-        if (!esGuante)
+        if (objetoEnAlcance.CompareTag("Guante_Item"))
         {
-            if (!manoIzquierdaEquipada || !manoDerechaEquipada)
+            string gloveName = objetoEnAlcance.name.ToLower();
+            if ((gloveName.Contains("guante1") || gloveName.Contains("left")) && leftHandRenderer != null)
             {
-                Debug.LogWarning("¡No puedes tocar este objeto sin llevar puestos ambos guantes de seguridad!");
-                return; // Detiene por completo la ejecución del método Agarrar
+                leftHandRenderer.material = gloveMaterial;
+                isLeftGloveEquipped = true;
             }
-        }
-
-        if (esGuante)
-        {
-            GameObject guanteSuelo = objetoEnAlcance;
-            string nombreGuante = guanteSuelo.name.ToLower();
-
-            if (GuanteVisualCamera != null && !GuanteVisualCamera.activeSelf)
+            else if ((gloveName.Contains("guante2") || gloveName.Contains("right")) && rightHandRenderer != null)
             {
-                GuanteVisualCamera.SetActive(true);
-                if (textoIndicador != null)
-                    textoIndicador.SetActive(false);
+                rightHandRenderer.material = gloveMaterial;
+                isRightGloveEquipped = true;
             }
-
-            if (nombreGuante.Contains("guante1"))
-            {
-                if (mallaManoIzquierda != null && materialGuante != null)
-                {
-                    mallaManoIzquierda.material = materialGuante;
-                    manoIzquierdaEquipada = true;
-                    Debug.Log("¡Guante 1 recogido! Mano izquierda cambiada de color.");
-                }
-            }
-            else if (nombreGuante.Contains("guante2"))
-            {
-                if (mallaManoDerecha != null && materialGuante != null)
-                {
-                    mallaManoDerecha.material = materialGuante;
-                    manoDerechaEquipada = true;
-                    Debug.Log("¡Guante 2 recogido! Mano derecha cambiada de color.");
-                }
-            }
-
-            LimpiarSeleccion();
-            Destroy(guanteSuelo);
+            if (initialPromptText != null) initialPromptText.SetActive(false);
+            Destroy(objetoEnAlcance);
+            objetoEnAlcance = null;
+            if (crosshair != null) crosshair.color = Color.white;
             return;
         }
 
-        // =====================================================================
-        // Agarre normal de objetos comunes (Solo se alcanzará si pasó el filtro)
-        // =====================================================================
         GameObject objetoAProcesar = objetoEnAlcance;
         GameObject puntoManoDestino = null;
 
-        // AÑADIDO: Decide a qué mano va dependiendo del Tag
         if (objetoAProcesar.CompareTag("Grabbable_Object"))
         {
             if (objetoAgarradoIzquierdo != null) return;
@@ -218,7 +235,6 @@ public class Grab : MonoBehaviour
             escalaOriginalDerecha = objetoAProcesar.transform.localScale;
             puntoManoDestino = HandPointDerecho;
 
-            // CONEXIÓN NUEVA: Le avisamos al script propio del aparato que lo acabamos de equipar
             AgarradorTelescopico scriptAparato = objetoAProcesar.GetComponent<AgarradorTelescopico>();
             if (scriptAparato != null)
             {
@@ -227,8 +243,6 @@ public class Grab : MonoBehaviour
         }
         else if (objetoAProcesar.CompareTag("Sonda"))
         {
-            // MODIFICADO: Si es una sonda, evitamos que se intente procesar con clic izquierdo,
-            // ya que la recolección la maneja el script del brazo telescópico mediante el clic derecho.
             return;
         }
 
@@ -239,7 +253,6 @@ public class Grab : MonoBehaviour
         if (crosshair != null)
             crosshair.color = Color.white;
 
-        // TU LÓGICA DE FÍSICAS ORIGINAL INTACTA
         Rigidbody rb = objetoAProcesar.GetComponent<Rigidbody>();
         if (rb != null)
         {
@@ -249,7 +262,6 @@ public class Grab : MonoBehaviour
             rb.useGravity = false;
         }
 
-        // CORRECCIÓN MÍNIMA: Apagar todos los colliders hijos (evita caer del mapa)
         Collider[] todosLosColisionadores = objetoAProcesar.GetComponentsInChildren<Collider>();
         foreach (Collider col in todosLosColisionadores)
         {
@@ -259,7 +271,6 @@ public class Grab : MonoBehaviour
         objetoAProcesar.transform.SetParent(puntoManoDestino.transform, true);
 
         Transform snapPoint = objetoAProcesar.transform.Find("grip_point");
-
         if (snapPoint != null)
         {
             objetoAProcesar.transform.localRotation = Quaternion.Inverse(snapPoint.localRotation);
@@ -274,7 +285,6 @@ public class Grab : MonoBehaviour
         objetoEnAlcance = null;
     }
 
-    // AÑADIDO: Método Soltar dividido para Izquierda basado en tu código
     private void SoltarIzquierda()
     {
         if (objetoAgarradoIzquierdo == null) return;
@@ -296,12 +306,10 @@ public class Grab : MonoBehaviour
         objetoAgarradoIzquierdo = null;
     }
 
-    // AÑADIDO: Método Soltar dividido para Derecha basado en tu código
     private void SoltarDerecha()
     {
         if (objetoAgarradoDerecho == null) return;
 
-        // CONEXIÓN NUEVA: Le avisamos al aparato que lo soltamos para que apague sus funciones mecánicas
         AgarradorTelescopico scriptAparato = objetoAgarradoDerecho.GetComponent<AgarradorTelescopico>();
         if (scriptAparato != null)
         {
@@ -325,35 +333,31 @@ public class Grab : MonoBehaviour
         objetoAgarradoDerecho = null;
     }
 
-    public void RestablecerMaterialesManos()
+    public void ResetHandMaterials()
     {
-        if (mallaManoIzquierda != null && materialManoDesnuda != null)
-            mallaManoIzquierda.material = materialManoDesnuda;
-
-        if (mallaManoDerecha != null && materialManoDesnuda != null)
-            mallaManoDerecha.material = materialManoDesnuda;
-
-        manoIzquierdaEquipada = false;
-        manoDerechaEquipada = false;
+        if (leftHandRenderer != null && defaultHandMat != null) leftHandRenderer.material = defaultHandMat;
+        if (rightHandRenderer != null && defaultHandMat != null) rightHandRenderer.material = defaultHandMat;
+        isLeftGloveEquipped = false;
+        isRightGloveEquipped = false;
     }
 
-    private void AgregarOutline(GameObject obj)
+    private void LockCursor()
     {
-        if (obj == null) return;
-        Outline outline = obj.GetComponent<Outline>();
-        if (outline == null)
-            outline = obj.AddComponent<Outline>();
-
-        outline.effectColor = Color.green;
-        outline.effectDistance = new Vector2(3f, 3f);
-        outline.enabled = true;
+        Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
-    private void QuitarOutline(GameObject obj)
+    private void UnlockCursor()
     {
-        if (obj == null) return;
-        Outline outline = obj.GetComponent<Outline>();
-        if (outline != null)
-            outline.enabled = false;
+        Time.timeScale = 0f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    private IEnumerator RelockCursorNextFrame()
+    {
+        yield return new WaitForEndOfFrame();
+        LockCursor();
     }
 }
