@@ -47,19 +47,12 @@ public class Grab : MonoBehaviour
 
     void Update()
     {
-        // 1. Manejar la apertura y cierre del panel de información
         HandleObjectInfo();
-
-        // IMPORTANTE: Si el panel está abierto, bloqueamos el resto del script.
         if (HUDController.Instance != null && HUDController.Instance.IsPanelOpen())
         {
             return;
         }
-
-        // 2. Detectar objetos interactivos mediante raycast
         DetectarObjetoConRaycast();
-
-        // 3. Agarrar o soltar objetos con clic izquierdo
         if (Input.GetMouseButtonDown(0))
         {
             if (objetoEnAlcance != null && (objetoAgarradoIzquierdo == null || objetoAgarradoDerecho == null))
@@ -77,7 +70,7 @@ public class Grab : MonoBehaviour
 
         if (objetoAgarradoIzquierdo != null)
             objetoAgarradoIzquierdo.transform.localScale = escalaOriginalIzquierda;
-        
+
         if (objetoAgarradoDerecho != null)
             objetoAgarradoDerecho.transform.localScale = escalaOriginalDerecha;
     }
@@ -85,26 +78,25 @@ public class Grab : MonoBehaviour
     private void HandleObjectInfo()
     {
         if (HUDController.Instance == null) return;
-
-        // Si el panel ESTÁ ABIERTO
         if (HUDController.Instance.IsPanelOpen())
         {
             if (Input.GetKeyDown(infoKey) || Input.GetKeyDown(KeyCode.Escape))
             {
                 HUDController.Instance.CloseInfoPanel();
+                if (crosshair != null) crosshair.gameObject.SetActive(true);
                 StartCoroutine(RelockCursorNextFrame());
             }
             return;
         }
 
-        // Si el panel ESTÁ CERRADO y presionamos Info sobre un objeto válido
         if (Input.GetKeyDown(infoKey) && hoveredObject != null)
         {
             InformationObject info = hoveredObject.GetComponentInParent<InformationObject>();
             if (info != null)
             {
                 HUDController.Instance.OpenInfoPanel(info.displayName, info.size, info.specifications);
-                UnlockCursor(); 
+                if (crosshair != null) crosshair.gameObject.SetActive(false);
+                UnlockCursor();
             }
         }
     }
@@ -116,11 +108,14 @@ public class Grab : MonoBehaviour
             if (HUDController.Instance != null) HUDController.Instance.HideHint();
             return;
         }
-
         InformationObject info = hoveredObject.GetComponentInParent<InformationObject>();
         if (info != null && HUDController.Instance != null)
         {
             HUDController.Instance.UpdateHint($"[{infoKey}] Info");
+        }
+        else if (HUDController.Instance != null && !HUDController.Instance.IsPanelOpen())
+        {
+            HUDController.Instance.HideHint();
         }
     }
 
@@ -128,7 +123,7 @@ public class Grab : MonoBehaviour
     {
         int layerMask = ~(1 << LayerMask.NameToLayer("Ignore Raycast"));
         Ray ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
-        
+
         if (Physics.Raycast(ray, out RaycastHit hit, grabDistance, layerMask))
         {
             GameObject hitObject = hit.collider.gameObject;
@@ -142,15 +137,15 @@ public class Grab : MonoBehaviour
 
             bool sePuedeResaltar = false;
 
-            if (esGuante) 
+            if (esGuante)
             {
                 sePuedeResaltar = true;
             }
             else if (isLeftGloveEquipped && isRightGloveEquipped)
             {
-                if (esMulti && objetoAgarradoIzquierdo == null) sePuedeResaltar = true; 
-                else if (esAgarrador && objetoAgarradoDerecho == null) sePuedeResaltar = true; 
-                else if (esSonda && objetoAgarradoDerecho != null) sePuedeResaltar = true; 
+                if (esMulti && objetoAgarradoIzquierdo == null) sePuedeResaltar = true;
+                else if (esAgarrador && objetoAgarradoDerecho == null) sePuedeResaltar = true;
+                else if (esSonda && objetoAgarradoDerecho != null) sePuedeResaltar = true;
             }
 
             if (sePuedeResaltar)
