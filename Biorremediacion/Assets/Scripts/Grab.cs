@@ -5,15 +5,14 @@ using UnityEngine.UI;
 public class Grab : MonoBehaviour
 {
     [Header("Configuración de Agarre")]
-    public GameObject HandPointIzquierdo; // Punto para el multiparámetro
-    public GameObject HandPointDerecho;   // Punto para el agarrador
+    public GameObject HandPointIzquierdo;
+    public GameObject HandPointDerecho;
     public Image crosshair;
     public float grabDistance = 5f;
     public Camera playerCamera;
 
     [Header("Glove & Tutorial UI")]
     public GameObject gloveVisualCamera;
-    public GameObject initialPromptText;
 
     [Header("Hand Material Swapping")]
     public Renderer leftHandRenderer;
@@ -21,7 +20,6 @@ public class Grab : MonoBehaviour
     public Material defaultHandMat;
     public Material gloveMaterial;
 
-    // Variables para cada mano
     private GameObject objetoAgarradoIzquierdo = null;
     private GameObject objetoAgarradoDerecho = null;
     private GameObject objetoEnAlcance = null;
@@ -38,11 +36,10 @@ public class Grab : MonoBehaviour
     void Start()
     {
         if (playerCamera == null) playerCamera = Camera.main;
-        if (initialPromptText != null) initialPromptText.SetActive(true);
         if (gloveVisualCamera != null) gloveVisualCamera.SetActive(true);
 
         ResetHandMaterials();
-        LockCursor(); // Bloquea el cursor al iniciar el juego
+        LockCursor();
     }
 
     void Update()
@@ -52,7 +49,9 @@ public class Grab : MonoBehaviour
         {
             return;
         }
+
         DetectarObjetoConRaycast();
+
         if (Input.GetMouseButtonDown(0))
         {
             if (objetoEnAlcance != null && (objetoAgarradoIzquierdo == null || objetoAgarradoDerecho == null))
@@ -121,10 +120,12 @@ public class Grab : MonoBehaviour
 
     private void DetectarObjetoConRaycast()
     {
-        int layerMask = ~(1 << LayerMask.NameToLayer("Ignore Raycast"));
+        // Ignora explícitamente la capa Water y la capa Ignore Raycast
+        int layerMask = ~((1 << LayerMask.NameToLayer("Water")) | (1 << LayerMask.NameToLayer("Ignore Raycast")));
+
         Ray ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
 
-        if (Physics.Raycast(ray, out RaycastHit hit, grabDistance, layerMask))
+        if (Physics.Raycast(ray, out RaycastHit hit, grabDistance, layerMask, QueryTriggerInteraction.Ignore))
         {
             GameObject hitObject = hit.collider.gameObject;
             hoveredObject = hitObject;
@@ -206,7 +207,6 @@ public class Grab : MonoBehaviour
                 rightHandRenderer.material = gloveMaterial;
                 isRightGloveEquipped = true;
             }
-            if (initialPromptText != null) initialPromptText.SetActive(false);
             Destroy(objetoEnAlcance);
             objetoEnAlcance = null;
             if (crosshair != null) crosshair.color = Color.white;

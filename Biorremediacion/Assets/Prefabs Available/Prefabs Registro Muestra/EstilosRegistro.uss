@@ -1,0 +1,390 @@
+/* =========================================================
+   R_7_3_2_TomaMuestra.uss
+   Estilos para el formulario "Registro de Toma de Muestra" (UTPL)
+   -----------------------------------------------------------
+   Colores aproximados (ajusta a tu manual de marca si lo tienes):
+   - Rojo/vino del título ......... #7A1F2B
+   - Verde de "Laboratorios" ...... #8DC63F
+   - Gris de celdas de cabecera ... #D9D9D9
+   - Bordes ........................ #000000
+   ========================================================= */
+
+.doc-scrollview {
+    flex-grow: 1;
+    background-color: white;
+}
+
+.doc-root {
+    padding: 16px;
+    background-color: white;
+    max-width: 900px;
+}
+
+/* ---------------- ENCABEZADO ---------------- */
+
+.header-table {
+    flex-direction: row;
+    border-width: 2px;
+    border-color: black;
+}
+
+.header-cell {
+    border-width: 1px;
+    border-color: black;
+    padding: 4px;
+}
+
+.header-logo-cell {
+    width: 140px;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+.logo_utpl {
+    flex-grow: 1;
+    min-height: 55px;
+    background-color: transparent; /* Quita el fondo de color para que el logo se vea limpio */
+    
+    /* Referencia directa a la imagen guardada en la misma carpeta */
+    background-image: url("logo_utpl.png"); 
+    
+    /* Mantiene las proporciones del logo para que no se estire ni se deforme */
+    -unity-background-scale-mode: scale-to-fit; 
+}
+
+.logo-caption {
+    background-color: #8DC63F;
+    color: white;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    font-size: 11px;
+    padding: 3px 0;
+    margin-top: 4px;
+}
+
+.header-title-cell {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+}
+
+.uni-name {
+    font-size: 13px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: black;
+    white-space: normal;
+}
+
+.doc-title {
+    font-size: 20px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: #7A1F2B;
+    margin-top: 4px;
+    white-space: normal;
+}
+
+.doc-subtitle {
+    font-size: 12px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: black;
+    margin-top: 4px;
+}
+
+.header-meta-cell {
+    width: 230px;
+    flex-direction: column;
+}
+
+.meta-line {
+    font-size: 9px;
+    color: black;
+    white-space: normal;
+    margin: 0;
+    padding: 0 0 1px 0;
+}
+
+.meta-bold {
+    -unity-font-style: bold;
+}
+
+/* ---------------- BARRAS DE CONFIDENCIALIDAD ---------------- */
+
+.confidential-bar {
+    -unity-text-align: middle-center;
+    -unity-font-style: bold;
+    font-size: 10px;
+    color: black;
+    margin: 8px 0;
+}
+
+.footer-bar {
+    margin-top: 16px;
+}
+
+/* ---------------- CAMPOS SIMPLES (líneas con guion bajo) ---------------- */
+
+.field-row {
+    flex-direction: row;
+}
+
+.field-line {
+    flex-direction: row;
+    align-items: flex-end;
+    margin-bottom: 6px;
+}
+
+.half {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin-right: 24px;
+}
+
+.field-label {
+    font-size: 11px;
+    -unity-font-style: bold;
+    color: black;
+    margin-right: 4px;
+    white-space: nowrap;
+}
+
+.field-input {
+    flex-grow: 1;
+    background-color: transparent;
+    border-left-width: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 1px;
+    border-bottom-color: black;
+    border-radius: 0;
+    font-size: 11px;
+    padding: 0 2px;
+}
+
+.grow {
+    flex-grow: 1;
+}
+
+/* ---------------- TÍTULOS DE SECCIÓN ---------------- */
+
+.section-title {
+    font-size: 12px;
+    -unity-font-style: bold;
+    color: black;
+    margin-top: 12px;
+    margin-bottom: 4px;
+}
+
+/* ---------------- TABLAS GENÉRICAS ---------------- */
+
+.table-row {
+    flex-direction: row;
+}
+
+.table-header-cell {
+    background-color: #D9D9D9;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    font-size: 10px;
+    color: black;
+    border-width: 1px;
+    border-color: black;
+    padding: 3px;
+    white-space: normal;
+}
+
+.table-label-cell {
+    background-color: #D9D9D9;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    font-size: 10px;
+    color: black;
+    width: 140px;
+    border-width: 1px;
+    border-color: black;
+    padding: 3px;
+}
+
+.table-input-cell {
+    flex-grow: 1;
+    background-color: white;
+    font-size: 10px;
+    border-width: 1px;
+    border-color: black;
+    border-radius: 0;
+    padding: 3px;
+    margin: 0;
+}
+
+.table-data-cell {
+    background-color: white;
+    font-size: 9px;
+    color: black;
+    border-width: 1px;
+    border-color: black;
+    padding: 3px;
+    white-space: normal;
+}
+
+.full-span {
+    width: 100%;
+}
+
+/* ---------------- SECCIÓN A: LOCALIZACIÓN + CROQUIS ---------------- */
+
+.loc-croquis-row {
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.loc-table {
+    width: 280px;
+    flex-direction: column;
+}
+
+.croquis-box {
+    flex-grow: 1;
+    flex-direction: column;
+    border-width: 1px;
+    border-color: black;
+    margin-left: 10px;
+}
+
+.croquis-drawing-area {
+    flex-grow: 1;
+    min-height: 90px;
+    background-color: white;
+}
+
+/* ---------------- SECCIÓN B: INFORMACIÓN DE LA MUESTRA ---------------- */
+
+.sample-table {
+    border-width: 1px;
+    border-color: black;
+    margin-bottom: 8px;
+}
+
+.sample-code-cell {
+    width: 170px;
+}
+
+.sample-group {
+    flex-grow: 1;
+    flex-basis: 0;
+    flex-direction: column;
+}
+
+.sample-subcols {
+    flex-direction: row;
+}
+
+.table-input-cell.small {
+    flex-grow: 1;
+    flex-basis: 0;
+    width: auto;
+}
+
+.matriz-row {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 6px 0;
+}
+
+.matriz-label {
+    margin-right: 8px;
+}
+
+.matriz-toggle {
+    margin-right: 14px;
+    font-size: 10px;
+}
+
+/* ---------------- SECCIÓN C: PARÁMETROS IN SITU ---------------- */
+
+.param-table {
+    border-width: 1px;
+    border-color: black;
+    margin-bottom: 10px;
+}
+
+.param-cell {
+    flex-grow: 1;
+    flex-basis: 0;
+    min-width: 90px;
+}
+
+/* ---------------- SECCIÓN D: CONDICIONES CLIMÁTICAS ---------------- */
+
+.climate-table {
+    border-width: 1px;
+    border-color: black;
+    margin-bottom: 10px;
+}
+
+.climate-cell {
+    flex-grow: 1;
+    flex-basis: 0;
+    min-width: 100px;
+}
+
+.climate-cell-wide {
+    flex-grow: 2;
+}
+
+/* ---------------- SECCIÓN E: OBSERVACIONES ---------------- */
+
+.observaciones-box {
+    min-height: 70px;
+    background-color: white;
+    border-width: 1px;
+    border-color: black;
+    border-radius: 0;
+    font-size: 10px;
+    padding: 4px;
+    margin-bottom: 10px;
+    white-space: normal;
+}
+
+/* ---------------- CONTROL DE CAMBIOS ---------------- */
+
+.control-cambios-title {
+    background-color: black;
+    color: white;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    font-size: 11px;
+    padding: 5px;
+    margin-top: 16px;
+}
+
+.cambios-table {
+    border-width: 1px;
+    border-color: black;
+}
+
+.cambios-header-row {
+    background-color: #D9D9D9;
+}
+
+.cambios-fecha {
+    width: 80px;
+    -unity-text-align: middle-center;
+}
+
+.cambios-motivo {
+    width: 150px;
+}
+
+.cambios-cambios {
+    flex-grow: 1;
+}
+
+.cambios-version {
+    width: 90px;
+    -unity-text-align: middle-center;
+}

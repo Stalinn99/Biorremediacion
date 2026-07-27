@@ -1,0 +1,231 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="EstilosRegistro.uss"/>
+
+    <ui:ScrollView name="doc-scrollview" class="doc-scrollview">
+        <ui:VisualElement name="doc-root" class="doc-root">
+
+            <!-- ============ ENCABEZADO ============ -->
+            <ui:VisualElement name="header" class="header-table">
+                <ui:VisualElement name="header-logo-cell" class="header-cell header-logo-cell">
+                    <ui:VisualElement name="logo_utpl" class="logo_utpl" />
+                    <ui:Label text="Laboratorios" class="logo-caption" />
+                </ui:VisualElement>
+
+                <ui:VisualElement name="header-title-cell" class="header-cell header-title-cell">
+                    <ui:Label text="Universidad Técnica Particular de Loja" class="uni-name" />
+                    <ui:Label text="REGISTRO DE TOMA DE MUESTRA" class="doc-title" />
+                    <ui:Label text="LABORATORIOS UTPL" class="doc-subtitle" />
+                </ui:VisualElement>
+
+                <ui:VisualElement name="header-meta-cell" class="header-cell header-meta-cell">
+                    <ui:Label text="CODIGO: R.7.3.2" class="meta-line" />
+                    <ui:Label text="VERSION: 6" class="meta-line" />
+                    <ui:Label text="FECHA: 2021-08-23" class="meta-line" />
+                    <ui:Label text="Página 1 de 2" class="meta-line" />
+                    <ui:Label text="ELABORADO POR:" class="meta-line meta-bold" />
+                    <ui:Label text="Mercedes Villa Achupallas" class="meta-line" />
+                    <ui:Label text="REVISADO Y APROBADO POR:" class="meta-line meta-bold" />
+                    <ui:Label text="José Miguel Guamán Caraguay" class="meta-line" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:Label text="--------------------DOCUMENTO CONTROLADO Y CONFIDENCIAL-----------------------" class="confidential-bar" />
+
+            <!-- ============ PROYECTO / RESPONSABLE ============ -->
+            <ui:VisualElement class="field-line">
+                <ui:Label text="Proyecto/Cliente:" class="field-label" />
+                <ui:TextField name="proyecto-field" class="field-input" />
+            </ui:VisualElement>
+            <ui:VisualElement class="field-line">
+                <ui:Label text="Nombre del responsable de tomar la muestra:" class="field-label" />
+                <ui:TextField name="responsable-field" class="field-input" />
+            </ui:VisualElement>
+
+            <!-- ============ SECCIÓN A ============ -->
+            <ui:Label text="A. INFORMACIÓN DEL PUNTO DONDE SE TOMA LA MUESTRA:" class="section-title" />
+
+            <ui:VisualElement class="field-row">
+                <ui:VisualElement class="field-line half">
+                    <ui:Label text="Lugar:" class="field-label" />
+                    <ui:TextField name="lugar-field" class="field-input" />
+                </ui:VisualElement>
+                <ui:VisualElement class="field-line half">
+                    <ui:Label text="Sitio:" class="field-label" />
+                    <ui:TextField name="sitio-field" class="field-input" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement class="field-row">
+                <ui:VisualElement class="field-line half">
+                    <ui:Label text="Fecha:" class="field-label" />
+                    <ui:TextField name="fecha-field" class="field-input" />
+                </ui:VisualElement>
+                <ui:VisualElement class="field-line half">
+                    <ui:Label text="Hora:" class="field-label" />
+                    <ui:TextField name="hora-field" class="field-input" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement class="loc-croquis-row">
+                <ui:VisualElement class="loc-table">
+                    <ui:Label text="LOCALIZACIÓN DEL PUNTO:" class="table-header-cell full-span" />
+                    <ui:VisualElement class="table-row">
+                        <ui:Label text="Altitud (msnm):" class="table-label-cell" />
+                        <ui:TextField name="altitud-field" class="table-input-cell" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="table-row">
+                        <ui:Label text="Latitud (UTM):" class="table-label-cell" />
+                        <ui:TextField name="latitud-field" class="table-input-cell" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="table-row">
+                        <ui:Label text="Longitud (UTM):" class="table-label-cell" />
+                        <ui:TextField name="longitud-field" class="table-input-cell" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="croquis-box">
+                    <ui:Label text="CROQUIS:" class="table-header-cell" />
+                    <ui:VisualElement name="croquis-drawing-area" class="croquis-drawing-area" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- ============ SECCIÓN B ============ -->
+            <ui:Label text="B. INFORMACIÓN DE LA MUESTRA:" class="section-title" />
+
+            <ui:VisualElement class="sample-table">
+                <ui:VisualElement class="table-row">
+                    <ui:Label text="Código de la muestra:" class="table-label-cell sample-code-cell" />
+
+                    <ui:VisualElement class="sample-group">
+                        <ui:Label text="Físico químico" class="table-header-cell" />
+                        <ui:VisualElement class="sample-subcols">
+                            <ui:TextField name="codigo-fq-1-field" class="table-input-cell small" />
+                            <ui:TextField name="codigo-fq-2-field" class="table-input-cell small" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="sample-group">
+                        <ui:Label text="Metales pesados" class="table-header-cell" />
+                        <ui:VisualElement class="sample-subcols">
+                            <ui:TextField name="codigo-mp-1-field" class="table-input-cell small" />
+                            <ui:TextField name="codigo-mp-2-field" class="table-input-cell small" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="sample-group">
+                        <ui:Label text="Microbiológicos" class="table-header-cell" />
+                        <ui:VisualElement class="sample-subcols">
+                            <ui:TextField name="codigo-mb-1-field" class="table-input-cell small" />
+                            <ui:TextField name="codigo-mb-2-field" class="table-input-cell small" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement class="matriz-row">
+                <ui:Label text="Matriz:" class="field-label matriz-label" />
+                <ui:Toggle name="matriz-agua-natural-toggle" label="Agua Natural" class="matriz-toggle" />
+                <ui:Toggle name="matriz-agua-consumo-toggle" label="Agua de Consumo" class="matriz-toggle" />
+                <ui:Toggle name="matriz-agua-residual-toggle" label="Agua Residual" class="matriz-toggle" />
+                <ui:Toggle name="matriz-otros-toggle" label="Otros" class="matriz-toggle" />
+                <ui:Label text="Especifique:" class="field-label" />
+                <ui:TextField name="matriz-especifique-field" class="field-input grow" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="matriz-row">
+                <ui:Label text="Tipo de muestra:" class="field-label matriz-label" />
+                <ui:Toggle name="tipo-simple-toggle" label="Simple" class="matriz-toggle" />
+                <ui:Toggle name="tipo-compuesta-toggle" label="Compuesta" class="matriz-toggle" />
+            </ui:VisualElement>
+
+            <!-- ============ SECCIÓN C ============ -->
+            <ui:Label text="C. PARÁMETROS DE MEDICIÓN IN SITU:" class="section-title" />
+            <ui:VisualElement class="param-table">
+                <ui:VisualElement class="table-row">
+                    <ui:Label text="Temperatura del agua (°C)" class="table-header-cell param-cell" />
+                    <ui:Label text="Oxígeno Disuelto (mg/l)" class="table-header-cell param-cell" />
+                    <ui:Label text="Saturación OD (% Saturación)" class="table-header-cell param-cell" />
+                    <ui:Label text="pH" class="table-header-cell param-cell" />
+                    <ui:Label text="Conductividad eléctrica (uS/cm)" class="table-header-cell param-cell" />
+                    <ui:Label text="Turbiedad (NTU)" class="table-header-cell param-cell" />
+                </ui:VisualElement>
+                <ui:VisualElement class="table-row">
+                    <ui:TextField name="param-temp-agua-field" class="table-input-cell param-cell" />
+                    <ui:TextField name="param-oxigeno-disuelto-field" class="table-input-cell param-cell" />
+                    <ui:TextField name="param-saturacion-od-field" class="table-input-cell param-cell" />
+                    <ui:TextField name="param-ph-field" class="table-input-cell param-cell" />
+                    <ui:TextField name="param-conductividad-field" class="table-input-cell param-cell" />
+                    <ui:TextField name="param-turbiedad-field" class="table-input-cell param-cell" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- ============ SECCIÓN D ============ -->
+            <ui:Label text="D. CONDICIONES CLIMÁTICAS:" class="section-title" />
+            <ui:VisualElement class="climate-table">
+                <ui:VisualElement class="table-row">
+                    <ui:Label text="Temperatura Ambiente (°C)" class="table-header-cell climate-cell" />
+                    <ui:Label text="Humedad Relativa (%)" class="table-header-cell climate-cell" />
+                    <ui:Label text="Clima" class="table-header-cell climate-cell climate-cell-wide" />
+                </ui:VisualElement>
+                <ui:VisualElement class="table-row">
+                    <ui:TextField name="clima-temp-ambiente-field" class="table-input-cell climate-cell" />
+                    <ui:TextField name="clima-humedad-field" class="table-input-cell climate-cell" />
+                    <ui:TextField name="clima-clima-field" class="table-input-cell climate-cell climate-cell-wide" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- ============ SECCIÓN E ============ -->
+            <ui:Label text="E. OBSERVACIONES:" class="section-title" />
+            <ui:TextField name="observaciones-field" multiline="true" class="observaciones-box" />
+
+            <!-- ============ CONTROL DE CAMBIOS ============ -->
+            <ui:Label text="CONTROL DE CAMBIOS" class="control-cambios-title" />
+            <ui:VisualElement class="cambios-table">
+                <ui:VisualElement class="table-row cambios-header-row">
+                    <ui:Label text="FECHA" class="table-header-cell cambios-fecha" />
+                    <ui:Label text="MOTIVO DE REVISIÓN" class="table-header-cell cambios-motivo" />
+                    <ui:Label text="CAMBIOS" class="table-header-cell cambios-cambios" />
+                    <ui:Label text="VERSIÓN VIGENTE" class="table-header-cell cambios-version" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="table-row">
+                    <ui:Label text="14-04-2014" class="table-data-cell cambios-fecha" />
+                    <ui:Label text="Segunda visita de vigilancia" class="table-data-cell cambios-motivo" />
+                    <ui:Label text="Se añadió en el encabezado la palabra revisado" class="table-data-cell cambios-cambios" />
+                    <ui:Label text="Versión 2" class="table-data-cell cambios-version" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="table-row">
+                    <ui:Label text="09-12-2015" class="table-data-cell cambios-fecha" />
+                    <ui:Label text="Auditoria interna 2015" class="table-data-cell cambios-motivo" />
+                    <ui:Label text="Se incluye cuadro de control de cambios y se cambia totalmente el registro de muestreo en función de la información del OP 5.7 Muestreo." class="table-data-cell cambios-cambios" />
+                    <ui:Label text="Versión 3" class="table-data-cell cambios-version" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="table-row">
+                    <ui:Label text="30-06-2017" class="table-data-cell cambios-fecha" />
+                    <ui:Label text="Cambio de Logo de Laboratorios UTPL" class="table-data-cell cambios-motivo" />
+                    <ui:Label text="Se actualiza encabezado del documento con el nuevo logo, se mejora presentación de información." class="table-data-cell cambios-cambios" />
+                    <ui:Label text="Versión 4" class="table-data-cell cambios-version" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="table-row">
+                    <ui:Label text="2019-06-11" class="table-data-cell cambios-fecha" />
+                    <ui:Label text="Transición de la norma" class="table-data-cell cambios-motivo" />
+                    <ui:Label text="Se actualiza encabezado del documento con el nuevo código." class="table-data-cell cambios-cambios" />
+                    <ui:Label text="Versión 5" class="table-data-cell cambios-version" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="table-row">
+                    <ui:Label text="23-08-2021" class="table-data-cell cambios-fecha" />
+                    <ui:Label text="Cierre de no conformidades" class="table-data-cell cambios-motivo" />
+                    <ui:Label text="Se modifica las no conformidades presentadas al SAE" class="table-data-cell cambios-cambios" />
+                    <ui:Label text="Versión 6" class="table-data-cell cambios-version" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:Label text="--------------------DOCUMENTO CONTROLADO Y CONFIDENCIAL-----------------------" class="confidential-bar footer-bar" />
+
+        </ui:VisualElement>
+    </ui:ScrollView>
+</ui:UXML>
