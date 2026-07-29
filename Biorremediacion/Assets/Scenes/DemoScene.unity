@@ -2733,6 +2733,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Terrain
       objectReference: {fileID: 0}
+    - target: {fileID: 1411943365450221249, guid: cd89e308b98001d47a5f939297a42208, type: 3}
+      propertyPath: m_DrawTreesAndFoliage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2315057266958930470, guid: cd89e308b98001d47a5f939297a42208, type: 3}
+      propertyPath: m_DrawTreesAndFoliage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2326479467136406776, guid: cd89e308b98001d47a5f939297a42208, type: 3}
+      propertyPath: m_DrawTreesAndFoliage
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3555399904107305325, guid: cd89e308b98001d47a5f939297a42208, type: 3}
       propertyPath: m_LocalPosition.x
       value: 100
@@ -2771,6 +2783,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3555399904107305325, guid: cd89e308b98001d47a5f939297a42208, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9195302478407860649, guid: cd89e308b98001d47a5f939297a42208, type: 3}
+      propertyPath: m_DrawTreesAndFoliage
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
