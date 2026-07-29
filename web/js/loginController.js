@@ -56,7 +56,9 @@ btnIniciarSesion.addEventListener('click', async() => {
     if (loginExitoso) {
         mensajeError.style.color = "#4ade80";
         mensajeError.innerText = "!Bienvenido! Cargando simulador...";
-        // Aqui va la dirección al unity webgl
+        setTimeout(() => {
+            window.location.href = "simulador/index.html";
+        }, 1000);
 
     } else {
         // Si falló
