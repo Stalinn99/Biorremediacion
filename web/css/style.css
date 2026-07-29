@@ -1,0 +1,158 @@
+/* Reset básico para que se vea igual en todos los navegadores */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* El fondo principal */
+body {
+    background-image: url('../imgs/Login.png'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    /* Esto centra todo el panel en medio de la pantalla */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Un color oscuro de respaldo por si la imagen tarda en cargar */
+    background-color: #1a1a2e; 
+}
+
+/* Contenedor principal para limitar el ancho */
+.login-wrapper {
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+}
+
+/* Estilos del Logo UTPL */
+.logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+    /* Un fondo azul sutil para que el logo resalte como en tu diseño */
+    background: rgba(0, 50, 100, 0.6); 
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.logo-utpl {
+    max-width: 200px;
+    height: auto;
+}
+
+/* El Panel Transparente */
+.form-container {
+    background: rgba(0, 0, 0, 0.4); 
+    backdrop-filter: blur(12px); 
+    -webkit-backdrop-filter: blur(12px); 
+    border: 1px solid rgba(255, 255, 255, 0.15); 
+    border-radius: 15px;
+    padding: 40px 30px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Las cajas de texto  */
+.input-group {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border 0.3s ease;
+}
+
+.input-group:focus-within {
+    border: 1px solid rgba(255, 255, 255, 0.8); /* Brilla cuando el usuario escribe */
+}
+
+.input-group .icon {
+    padding: 15px;
+    color: white;
+    font-size: 20px;
+    background-color: rgba(0, 0, 0, 0.15); /* Oscurece un poco la zona del icono */
+}
+
+.input-group .icon i , .toggle-password i {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 22px;
+}
+
+.input-group input {
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 15px;
+    width: 100%;
+    outline: none;
+    font-size: 16px;
+}
+
+/* Cambia el color del texto de relleno para que se lea bien */
+.input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Botones */
+.btn-primary {
+    width: 100%;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.85);
+    color: #333;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: white; /* Se ilumina al pasar el mouse */
+}
+
+.btn-secondary {
+    width: 100%;
+    padding: 15px;
+    background-color: transparent;
+    color: white;
+    border: 1px solid white;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Mensaje de error */
+.error-text {
+    color: #ff6b6b;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 15px;
+    min-height: 20px;
+    font-weight: 600;
+}
+
+/* Botóm para ver/ocultar contraseña*/
+.toggle-password {
+    padding: 15px;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+    color: white; /* se ilumina al pasar el mause */
+}
