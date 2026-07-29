@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Biorremediación UTPL</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <div class="login-wrapper">
+
+        <div class="logo-container">
+            <img src = "imgs/Logo UTPL.png" alt="Logo UTPL" class="logo-utpl">
+        </div>
+
+        <div class="form-container">
+            
+            <div class="input-group">
+                <span class="icon"><i class='bx bx-user'></i></span>
+                <input type="email" id="inputCorreo" placeholder="Correo Institucional" autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <span class="icon"><i class='bx bx-lock-alt'></i></span>
+                <input type="password" id="inputClave" placeholder="**********">
+                <span class="toggle-password" id="btnToggleClave"><i class='bx bx-show'></i></span>
+            </div>
+
+            <p id="mensajeError" class="error-text"></p>
+
+            <button id="btnIniciarSesion" class="btn-primary">Iniciar Sesión</button>
+        </div>
+    </div>
+
+    <script src="js/apiService.js"></script>
+    <script src="js/loginController.js"></script>
+
+</body>
+</html>
