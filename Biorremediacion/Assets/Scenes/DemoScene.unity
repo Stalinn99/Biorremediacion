@@ -2738,6 +2738,10 @@ PrefabInstance:
       value: Terrain
       objectReference: {fileID: 0}
     - target: {fileID: 1411943365450221249, guid: cd89e308b98001d47a5f939297a42208, type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1411943365450221249, guid: cd89e308b98001d47a5f939297a42208, type: 3}
       propertyPath: m_DrawInstanced
       value: 1
       objectReference: {fileID: 0}
@@ -2747,7 +2751,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1411943365450221249, guid: cd89e308b98001d47a5f939297a42208, type: 3}
       propertyPath: m_HeightmapPixelError
-      value: 20
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1411943365450221249, guid: cd89e308b98001d47a5f939297a42208, type: 3}
+      propertyPath: m_EnableHeightmapRayTracing
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2315057266958930470, guid: cd89e308b98001d47a5f939297a42208, type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2315057266958930470, guid: cd89e308b98001d47a5f939297a42208, type: 3}
       propertyPath: m_DrawInstanced
@@ -2759,7 +2771,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2315057266958930470, guid: cd89e308b98001d47a5f939297a42208, type: 3}
       propertyPath: m_HeightmapPixelError
-      value: 20
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2315057266958930470, guid: cd89e308b98001d47a5f939297a42208, type: 3}
+      propertyPath: m_EnableHeightmapRayTracing
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2326479467136406776, guid: cd89e308b98001d47a5f939297a42208, type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2326479467136406776, guid: cd89e308b98001d47a5f939297a42208, type: 3}
       propertyPath: m_DrawInstanced
@@ -2771,7 +2791,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2326479467136406776, guid: cd89e308b98001d47a5f939297a42208, type: 3}
       propertyPath: m_HeightmapPixelError
-      value: 20
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2326479467136406776, guid: cd89e308b98001d47a5f939297a42208, type: 3}
+      propertyPath: m_EnableHeightmapRayTracing
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3555399904107305325, guid: cd89e308b98001d47a5f939297a42208, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2814,6 +2838,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9195302478407860649, guid: cd89e308b98001d47a5f939297a42208, type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9195302478407860649, guid: cd89e308b98001d47a5f939297a42208, type: 3}
       propertyPath: m_DrawInstanced
       value: 1
       objectReference: {fileID: 0}
@@ -2823,7 +2851,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9195302478407860649, guid: cd89e308b98001d47a5f939297a42208, type: 3}
       propertyPath: m_HeightmapPixelError
-      value: 20
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 9195302478407860649, guid: cd89e308b98001d47a5f939297a42208, type: 3}
+      propertyPath: m_EnableHeightmapRayTracing
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

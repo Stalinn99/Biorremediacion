@@ -8,7 +8,7 @@ TerrainLayer:
   m_PrefabAsset: {fileID: 0}
   m_Name: Ground_Sand_Leaves_Green_Layer
   m_DiffuseTexture: {fileID: 2800000, guid: 986eb96e8335eb54fa6212f7dcefb096, type: 3}
-  m_NormalMapTexture: {fileID: 2800000, guid: 5e9cb2f9d012a34479d184df86a30a5f, type: 3}
+  m_NormalMapTexture: {fileID: 0}
   m_MaskMapTexture: {fileID: 2800000, guid: e61e4f5e94ce8f2469446fa35ffc11e1, type: 3}
   m_TileSize: {x: 5, y: 5}
   m_TileOffset: {x: 0, y: 0}
@@ -20,3 +20,4 @@ TerrainLayer:
   m_DiffuseRemapMax: {x: 1, y: 1, z: 1, w: 1}
   m_MaskMapRemapMin: {x: 0, y: 0, z: 0, w: 0}
   m_MaskMapRemapMax: {x: 0, y: 1, z: 0, w: 0}
+  m_SmoothnessSource: 1
