@@ -56,10 +56,10 @@ btnIniciarSesion.addEventListener('click', async() => {
     if (loginExitoso) {
         mensajeError.style.color = "#4ade80";
         mensajeError.innerText = "!Bienvenido! Cargando simulador...";
+        localStorage.setItem("sesion_activa", true);
         setTimeout(() => {
-            window.location.href = "simulador/index.html";
+            window.location.href = "https://jefferson-999.itch.io/biorremediacion";
         }, 1000);
-
     } else {
         // Si falló
         mensajeError.style.color = "#ff6b6b";
