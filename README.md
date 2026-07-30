@@ -25,9 +25,10 @@
 11. InformationObject.cs
 12. FormularioUIToolkitController.cs
 13. FadeInOut.cs
-14. GPS_IN_GAME.cs
-15. WaterfallAudio.cs
-16. Change_Scenes.cs
+14. BillboardText.cs
+15. GPS_IN_GAME.cs
+16. WaterfallAudio.cs
+17. Change_Scenes.cs
 
 ---
 
@@ -62,7 +63,6 @@ Hace que la botella se llene cuando toca el agua. Tiene dos formas de detectarlo
 
 > - Como WaterZone genera el valor random cada vez que lo lees si dos scripts leen el mismo valor en el mismo instante pueden salir números distintos entre sí
 > - En WaterProbe, el tipo de sonda se escribe a mano como texto ("pH", "O2", etc), entonces si alguien lo escribe mal en el Inspector (con espacio o minúscula) simplemente no va a funcionar y no salta ningún error
-> - En BottleFill lo de revisar cada frame con OverlapSphere capaz no es muy necesario porque ya está el OnTriggerStay haciendo básicamente lo mismo. Si en algún momento hay muchas botellas en la escena a la vez podría afectar un poco el rendimiento
 
 ---
 
@@ -75,7 +75,8 @@ Es la herramienta que sirve para agarrar las sondas desde lejos. Con clic derech
 Este es el script más grande y el que maneja todo el sistema de manos del jugador: agarrar guantes, agarrar el agarrador telescópico, resaltar objetos con un outline cuando les apuntas, y también abre el panel de información cuando le das a la tecla de info (I por defecto). Cuando se abre ese panel, pausa el juego con Time.timeScale = 0.
 
 > - Tanto AgarradorTelescopico como Grab identifican ciertos objetos comparando el nombre (por ejemplo si el nombre contiene "OXÍGENO" o "left"/"guante1"). Esto funciona pero es medio frágil, si alguien cambia el nombre del objeto en Unity se rompe el ajuste sin que salte ningún error simplemente deja de funcionar bien
-> - Tanto Grab.cs como FormularioUIToolkitController.cs tocan el Time.timeScale por su cuenta (uno para pausar cuando abres el panel de info, el otro para pausar cuando abres el formulario). Si en algún momento se abren los dos casi al mismo tiempo, uno le puede pisar la pausa al otro y quedar el juego en un estado raro
+
+> - Tanto Grab.cs como FormularioUIToolkitController.cs tocan el Time.timeScale por su cuenta si en algún momento se abren los dos casi al mismo tiempo, uno le puede pisar la pausa al otro y quedar el juego en un estado raro
 
 ---
 
@@ -92,6 +93,11 @@ Maneja el formulario que aparece cuando estás dentro de una zona de agua y le d
 
 **FadeInOut.cs**
 Sirve para hacer fundidos (fade in / fade out) en pantallas o imágenes del Canvas, usando una lista de "a los cuántos segundos aparece" y "a los cuántos segundos desaparece".
+
+**BillboardText.cs**
+Este es chiquito pero útil: sirve para que un texto que está puesto en el mundo (por ejemplo un letrero o una etiqueta flotante sobre algún objeto) siempre quede mirando hacia la cámara, sin importar hacia dónde te muevas. Busca la cámara principal (Camera.main) sola si no le asignas una a mano, y en LateUpdate le copia la rotación de la cámara (con un giro de 180° para que el texto no se vea al revés).
+
+> - Usa `Camera.main` como respaldo si no le asignas la cámara manualmente, y eso internamente hace un `FindGameObjectWithTag("MainCamera")` por dentro de Unity, que es un poco más lento que tener la referencia ya guardada. Como solo la busca si `camTransform` está vacío no debería ser un problema real, pero si se usa este script en muchos textos a la vez convendría asignarle la cámara desde el Inspector en vez de dejar que la busque sola.
 
 > - HUDController usa Singleton pero no tiene DontDestroyOnLoad como el proyecto carga una escena adicional con Change_Scenes, hay que fijarse que el HUDController no se destruya sin querer porque si eso pasa cualquier script que llame a HUDController.Instance va a tirar un error de referencia nula.
 
@@ -126,7 +132,8 @@ Es el que hace la transición del menú principal al juego. Primero carga la esc
 6. Al meter la sonda en el agua, WaterProbe lee el dato y lo manda a MultiparameterScreen. Al mismo tiempo, si tienes la botella, BottleFill la va llenando.
 7. Estando en la zona de agua, puedes abrir el formulario con F (FormularioUIToolkitController) para anotar los datos.
 8. En cualquier momento puedes apuntar a un objeto y presionar la tecla de info para ver sus datos (esto lo maneja Grab + HUDController + InformationObject).
-9. FadeInOut y WaterfallAudio le dan más ambiente a la experiencia.
+9. Los letreros y etiquetas de texto en el mundo (con BillboardText) se van girando solos para quedar siempre mirando hacia donde estés parado.
+10. FadeInOut y WaterfallAudio le dan más ambiente a la experiencia.
 
 ---
 
@@ -190,5 +197,3 @@ Esta parte es aparte del código en sí: son las **etiquetas (Tags)** y **capas 
 - Tag `Player` puesto en el GameObject del jugador
 - Layer `Water` creado y asignado a los objetos de agua
 - Objetos que no deban bloquear el Raycast del agarrador puestos en `Ignore Raycast`
-
-Si falta alguno de estos, lo más probable es que veas cosas como: la sonda no se engancha, el agarrador no detecta nada, el GPS no encuentra al jugador, o el agua no se puede medir — todo sin ningún error en la consola.
