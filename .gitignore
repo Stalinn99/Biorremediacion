@@ -67,3 +67,6 @@ ServerData
 
 [Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 [Aa]ssets/[Ss]ceneDependencyCache*
+
+!web/simulador/Build/
+!web/simulador/Build/**
