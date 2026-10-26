@@ -269,3 +269,18 @@ El Clic Derecho está reservado exclusivamente para la **operación del Agarrado
   * Al apuntar a cualquier objeto interactivo con componente de información, aparecerá un indicador en pantalla. Presionar `I` pausará el juego temporalmente y liberará el cursor para leer las especificaciones.
 * **Formulario en Zonas de Agua (`Tecla F`):**
   * Al entrar a una `WaterZone`, aparecerá un aviso en pantalla `[F] Formulario`. Al presionar `F`, se pausará la escena, se liberará el cursor y se abrirá el formulario UI Toolkit. Presionar `Esc` o `F` nuevamente para volver al juego
+
+
+# Errores idntificados:
+
+## 1. Se quitan los objetos cuando se pulsa [ESC] para salir del formulario:
+
+### Pasos para recrear el error:
+
+    1. Ponerse los guantes
+    2. Click izquierdo en el agarrador
+    3. click izquierdo en el multiparametro
+    4. click derecho en alguna sonda
+    5. ir a una zona de agua en los lugares ccorrectos
+    5. pulsar [F] para ingresar al formulario
+    6. pulsar [ESC] para salir del formulario
