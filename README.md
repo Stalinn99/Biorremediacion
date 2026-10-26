@@ -197,3 +197,75 @@ Esta parte es aparte del código en sí: son las **etiquetas (Tags)** y **capas 
 - Tag `Player` puesto en el GameObject del jugador
 - Layer `Water` creado y asignado a los objetos de agua
 - Objetos que no deban bloquear el Raycast del agarrador puestos en `Ignore Raycast`
+
+# Manual de Controles y Comportamiento del Jugador
+
+Este documento detalla la guía de uso de controles y las mecánicas de interacción del jugador en el juego.
+
+---
+
+## 1. Controles Básicos y Movimiento
+
+| Acción | Tecla / Control | Descripción |
+| :--- | :--- | :--- |
+| **Moverse hacia adelante** | `W`| Movimiento continuo hacia adelante |
+| **Moverse hacia atras** | `S`| Movimiento continuo hacia atrás |
+| **Moverse hacia izquierda** | `A`| Movimiento continuo hacia atrás |
+| **Moverse hacia derecha** | `D`| Movimiento continuo hacia atrás |
+| **Saltar** | `Espacio` | Permite saltar únicamente si el jugador está tocando el suelo. |
+| **Mirar / Girar** | `Movimiento del Mouse` | Controla la cámara. Mover horizontalmente rota al personaje; mover verticalmente inclina la vista arriba/abajo. |
+| **Ver Información** | `I` | Abre el panel de información detallada del objeto que se esté mirando. |
+| **Abrir Formulario** | `F` | Abre o cierra el formulario de registro al estar dentro de una **Zona de Agua**. |
+| **Salir / Cerrar** | `Esc` | Cierra la interfaz de información de objetos o el formulario interactivo. |
+
+---
+
+## 2. Comportamiento de Interacción y Agarres
+
+El jugador posee dos manos (izquierda y derecha) para sostener herramientas y objetos, además de requerir equipamiento previo para ciertas interacciones.
+
+### Requisito Previo: Guantes
+* Antes de poder manipular objetos de prueba o herramientas, se deben equipar **ambos guantes** (Izquierdo y Derecho) haciendo **Clic Izquierdo** sobre ellos en el mapa.
+
+---
+
+## 3. Acciones del Clic Izquierdo (`Clic Primario`)
+
+El comportamiento del Clic Izquierdo varía según lo que se esté mirando y lo que se lleve equipado en las manos:
+
+### A. Si no se tiene ningún objeto en la mira (mirando al aire/entorno)
+* **Soltar Objeto Derecho:** Si tienes agarrado un objeto en la mano derecha (como el *Agarrador Telescópico*), se soltará primero.
+* **Soltar Objeto Izquierdo:** Si la mano derecha está libre pero tienes un objeto en la mano izquierda (ej. *Multiparámetro / Botella*), se soltará el objeto de la mano izquierda.
+
+### B. Si estás mirando a un objeto interactivo (dentro del rango de alcance)
+
+1. **Equipar Guantes (`Tag: Guante_Item`):**
+   * Pone el guante correspondiente en la mano izquierda o derecha y elimina el ítem del mundo.
+2. **Objeto Multi-parámetro / Recolector (`Tag: Grabbable_Object`):**
+   * *Requisito:* Tener ambos guantes equipados y la mano izquierda libre.
+   * **Resultado:** Se equipa en la **Mano Izquierda**.
+3. **Agarrador Telescópico (`Tag: Agarrador`):**
+   * *Requisito:* Tener ambos guantes equipados y la mano derecha libre.
+   * **Resultado:** Se equipa en la **Mano Derecha** y activa el sistema de acoplamiento de sondas.
+
+---
+
+## 4. Acciones del Clic Derecho (`Clic Secundario`)
+
+El Clic Derecho está reservado exclusivamente para la **operación del Agarrador Telescópico** (equipado en la mano derecha):
+
+| Estado del Agarrador | Acción del Clic Derecho | Resultado |
+| :--- | :--- | :--- |
+| **Agarrador equipado, SIN sonda** | Mirar a una Sonda (`Tag: Sonda`) y presionar **Clic Derecho**. | **Acoplar Sonda:** Atrae y engancha la sonda en la punta del agarrador telescópico. Ajusta su escala y escala/posición de forma automática. |
+| **Agarrador equipado, CON sonda** | Presionar **Clic Derecho** en cualquier dirección. | **Soltar Sonda:** Desengancha la sonda de la punta del agarrador, restaurando su escala original y reactivando su física y gravedad para que caiga. |
+
+---
+
+## 5. Interacciones Automáticas y Contextuales
+
+* **Llenado de Botellas de Muestra:**
+  * Si el jugador sostiene una botella (`Grabbable_Object`) en la mano izquierda y entra físicamente a una **Zona de Agua (`WaterZone`)**, la botella se llenará de líquido automáticamente sin necesidad de presionar ninguna tecla esto solo pasa en una parte de la zona de agua no se puede llenar la botella de las orillas tiene que ser en el centro
+* **Panel de Información (`Tecla I`):**
+  * Al apuntar a cualquier objeto interactivo con componente de información, aparecerá un indicador en pantalla. Presionar `I` pausará el juego temporalmente y liberará el cursor para leer las especificaciones.
+* **Formulario en Zonas de Agua (`Tecla F`):**
+  * Al entrar a una `WaterZone`, aparecerá un aviso en pantalla `[F] Formulario`. Al presionar `F`, se pausará la escena, se liberará el cursor y se abrirá el formulario UI Toolkit. Presionar `Esc` o `F` nuevamente para volver al juego
